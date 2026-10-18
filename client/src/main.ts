@@ -1,5 +1,7 @@
+type Mode = "focus" | "break" | "long-break";
+
 let timeRemaining: number = 25 * 60;
-let currentMode: string = "focus";
+let currentMode: Mode = "focus";
 
 const timerDisplay = document.getElementById("timer")!;
 const modeDisplayer = document.getElementById("mode")!;
@@ -19,3 +21,4 @@ function formatTime(seconds: number): string {
 }
 
 timerDisplay.textContent = formatTime(timeRemaining);
+modeDisplayer.textContent = currentMode;
