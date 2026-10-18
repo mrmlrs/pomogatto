@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "module": "nodenext",
+    "module": "ES2022",
     "target": "esnext",
     "sourceMap": true,
     "declaration": true,
