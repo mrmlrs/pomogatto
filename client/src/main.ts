@@ -10,6 +10,7 @@ const timerState = {
     intervalId: 0,
     isPaused: false,
     isRunning: false,
+    focusCount: 0,
 };
 
 // DOM
@@ -47,7 +48,7 @@ function startTimer(): void {
     timerState.intervalId = setInterval(() => {
         timerState.timeRemaining = Math.floor(timerState.duration - (Date.now() - timerState.startTime) / 1000);
         if (timerState.timeRemaining <= 0) {
-            stopTimer();
+            nextMode();
             return;
         }
         timerDisplay.textContent = formatTime(timerState.timeRemaining);
@@ -58,7 +59,10 @@ function stopTimer(): void {
     clearInterval(timerState.intervalId);
     timerState.isRunning = false;
     timerState.isPaused = false;
+    timerState.currentMode = "focus";
+    timerState.duration = 25 * 60;
     timerState.timeRemaining = timerState.duration;
+    timerState.focusCount = 0;
     timerDisplay.textContent = formatTime(timerState.timeRemaining);
 }
 
@@ -69,6 +73,27 @@ function pauseTimer(): void {
     clearInterval(timerState.intervalId);
     timerState.isPaused = true;
     timerState.isRunning = false;
+}
+
+function nextMode() {
+    if (timerState.currentMode === "focus") {
+        timerState.focusCount += 1;
+        if (timerState.focusCount % 3 !== 0) {
+            timerState.currentMode = "break";
+            timerState.duration = 5 * 60;
+        } else {
+            timerState.currentMode = "long-break";
+            timerState.duration = 15 * 60;
+        }
+    }
+    else if (timerState.currentMode === "break" || timerState.currentMode === "long-break") {
+        timerState.currentMode = "focus";
+        timerState.duration = 25 * 60;
+    }
+    timerState.timeRemaining = timerState.duration;
+    modeDisplayer.textContent = timerState.currentMode;
+    timerState.isRunning = false;
+    startTimer();
 }
 
 // Init
