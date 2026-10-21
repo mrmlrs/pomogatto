@@ -17,6 +17,15 @@
     <button id="start">Start</button>
     <button id="pause">Pause</button>
     <button id="stop">Stop</button>
+
+    <label for="focusDuration">Focus (minutes)</label>
+    <input type="number" id="focusDuration" value="25" min="1" max="120">
+    <label for="breakDuration">Break (minutes)</label>
+    <input type="number" id="breakDuration" value="5" min="1" max="120">
+    <label for="longBreakDuration">Long-break (minutes)</label>
+    <input type="number" id="longBreakDuration" value="15" min="1" max="120">
+
+    <button id="save">Save</button>
     <script type="module" src="dist/main.js"></script>
 </body>
 

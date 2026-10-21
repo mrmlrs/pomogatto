@@ -19,9 +19,15 @@ const timerState = {
 // DOM
 const timerDisplay = document.getElementById("timer")!;
 const modeDisplayer = document.getElementById("mode")!;
+
 const startButton = document.getElementById("start")!;
 const pauseButton = document.getElementById("pause")!;
 const stopButton = document.getElementById("stop")!;
+const saveButton = document.getElementById("save")!;
+
+const focusInput = document.getElementById("focusDuration")! as HTMLInputElement;
+const breakInput = document.getElementById("breakDuration")! as HTMLInputElement;
+const longBreakInput = document.getElementById("longBreakDuration")! as HTMLInputElement;
 
 // Functions
 function formatTime(seconds: number): string {
@@ -112,8 +118,40 @@ function loadSettings(): void {
     if (longBreak !== null) {
         timerState.longBreakDuration = parseInt(longBreak, 10);
     }
+    focusInput.value = String(timerState.focusDuration / 60);
+    breakInput.value = String(timerState.breakDuration / 60);
+    longBreakInput.value = String(timerState.longBreakDuration / 60);
     timerState.duration = timerState.focusDuration;
     timerState.timeRemaining = timerState.duration;
+}
+
+function saveSettings(): void {
+    const focusValue = focusInput.value;
+    const breakValue = breakInput.value;
+    const longBreakValue = longBreakInput.value;
+
+    const focus = parseInt(focusValue, 10);
+    const pause = parseInt(breakValue, 10);
+    const longBreak = parseInt(longBreakValue, 10);
+
+    if (isNaN(focus) || focus < 1 || focus > 120 ||
+        isNaN(pause) || pause < 1 || pause > 120 ||
+        isNaN(longBreak) || longBreak < 1 || longBreak > 120) {
+        return;
+    }
+    localStorage.setItem("focusDuration", String(focus * 60));
+    localStorage.setItem("breakDuration", String(pause * 60));
+    localStorage.setItem("longBreakDuration", String(longBreak * 60));
+
+    timerState.focusDuration = focus * 60;
+    timerState.breakDuration = pause * 60;
+    timerState.longBreakDuration = longBreak * 60;
+
+    if (!timerState.isRunning) {
+        timerState.duration = timerState.focusDuration;
+        timerState.timeRemaining = timerState.focusDuration;
+        timerDisplay.textContent = formatTime(timerState.timeRemaining);
+    }
 }
 
 // Init
@@ -125,3 +163,4 @@ modeDisplayer.textContent = timerState.currentMode;
 startButton.addEventListener("click", startTimer);
 stopButton.addEventListener("click", stopTimer);
 pauseButton.addEventListener("click", pauseTimer);
+saveButton.addEventListener("click", saveSettings);
