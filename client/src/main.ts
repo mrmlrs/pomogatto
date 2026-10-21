@@ -11,6 +11,9 @@ const timerState = {
     isPaused: false,
     isRunning: false,
     focusCount: 0,
+    focusDuration: 25 * 60,
+    breakDuration: 5 * 60,
+    longBreakDuration: 15 * 60,
 };
 
 // DOM
@@ -60,7 +63,7 @@ function stopTimer(): void {
     timerState.isRunning = false;
     timerState.isPaused = false;
     timerState.currentMode = "focus";
-    timerState.duration = 25 * 60;
+    timerState.duration = timerState.focusDuration;
     timerState.timeRemaining = timerState.duration;
     timerState.focusCount = 0;
     timerDisplay.textContent = formatTime(timerState.timeRemaining);
@@ -75,20 +78,20 @@ function pauseTimer(): void {
     timerState.isRunning = false;
 }
 
-function nextMode() {
+function nextMode(): void {
     if (timerState.currentMode === "focus") {
         timerState.focusCount += 1;
         if (timerState.focusCount % 3 !== 0) {
             timerState.currentMode = "break";
-            timerState.duration = 5 * 60;
+            timerState.duration = timerState.breakDuration;
         } else {
             timerState.currentMode = "long-break";
-            timerState.duration = 15 * 60;
+            timerState.duration = timerState.longBreakDuration;
         }
     }
     else if (timerState.currentMode === "break" || timerState.currentMode === "long-break") {
         timerState.currentMode = "focus";
-        timerState.duration = 25 * 60;
+        timerState.duration = timerState.focusDuration;
     }
     timerState.timeRemaining = timerState.duration;
     modeDisplayer.textContent = timerState.currentMode;
@@ -96,7 +99,25 @@ function nextMode() {
     startTimer();
 }
 
+function loadSettings(): void {
+    const focus = localStorage.getItem("focusDuration");
+    const pause = localStorage.getItem("breakDuration");
+    const longBreak = localStorage.getItem("longBreakDuration");
+    if (focus !== null) {
+        timerState.focusDuration = parseInt(focus, 10);
+    }
+    if (pause !== null) {
+        timerState.breakDuration = parseInt(pause, 10);
+    }
+    if (longBreak !== null) {
+        timerState.longBreakDuration = parseInt(longBreak, 10);
+    }
+    timerState.duration = timerState.focusDuration;
+    timerState.timeRemaining = timerState.duration;
+}
+
 // Init
+loadSettings();
 timerDisplay.textContent = formatTime(timerState.timeRemaining);
 modeDisplayer.textContent = timerState.currentMode;
 
