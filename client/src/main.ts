@@ -1,5 +1,6 @@
 // Types
 type Mode = "focus" | "break" | "long-break";
+const API_URL = "http://localhost:3000";
 
 // States
 const timerState = {
@@ -87,6 +88,14 @@ function pauseTimer(): void {
 function nextMode(): void {
     if (timerState.currentMode === "focus") {
         timerState.focusCount += 1;
+        fetch(`${API_URL}/api/sessions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                duration: timerState.focusDuration / 60,
+                status: "completed",
+            }),
+        });
         if (timerState.focusCount % 3 !== 0) {
             timerState.currentMode = "break";
             timerState.duration = timerState.breakDuration;
